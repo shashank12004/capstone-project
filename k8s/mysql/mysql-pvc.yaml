@@ -1,0 +1,12 @@
+# Without persistent storage, deleting and recreating the MySQL Pod could result in losing its database data. This claim requests 2 GB of persistent storage from the cluster's default storage class.
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: quickbite-mysql-pvc
+  namespace: quickbite
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi

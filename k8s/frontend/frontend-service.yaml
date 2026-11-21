@@ -1,0 +1,13 @@
+# The frontend image was built with the API URL http://localhost:8081/api. That's intentional: the browser will access the backend using a local port-forward, which we'll configure next
+apiVersion: v1
+kind: Service
+metadata:
+  name: quickbite-frontend
+  namespace: quickbite
+spec:
+  type: ClusterIP
+  selector:
+    app: quickbite-frontend
+  ports:
+    - port: 3000
+      targetPort: 3000

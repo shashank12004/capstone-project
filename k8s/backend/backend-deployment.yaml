@@ -1,0 +1,61 @@
+# We are initially running two backend replicas. Kubernetes will maintain two backend Pods through the Deployment.
+
+# The health probes assume that your Spring Boot Actuator health endpoint is available at /actuator/health, as in your earlier QuickBite configuration.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: quickbite-backend
+  namespace: quickbite
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: quickbite-backend
+  template:
+    metadata:
+      labels:
+        app: quickbite-backend
+    spec:
+      containers:
+        - name: backend
+          image: quickbite-backend:local
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+          env:
+            - name: SPRING_DATASOURCE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: quickbite-backend-config
+                  key: SPRING_DATASOURCE_URL
+            - name: SPRING_DATASOURCE_USERNAME
+              valueFrom:
+                configMapKeyRef:
+                  name: quickbite-backend-config
+                  key: SPRING_DATASOURCE_USERNAME
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: quickbite-mysql-secret
+                  key: MYSQL_PASSWORD
+          startupProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 30
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            periodSeconds: 20
+            timeoutSeconds: 5
+            failureThreshold: 3
