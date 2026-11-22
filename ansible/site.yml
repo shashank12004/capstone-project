@@ -1,0 +1,19 @@
+---
+- name: Deploy QuickBite to Kubernetes
+  hosts: local
+  gather_facts: false
+
+  tasks:
+    - name: Ensure QuickBite namespace exists
+      ansible.builtin.command:
+        cmd: kubectl create namespace quickbite
+      register: namespace_result
+      failed_when:
+        - namespace_result.rc != 0
+        - "'AlreadyExists' not in namespace_result.stderr"
+
+    - name: Apply QuickBite Kubernetes manifests
+      ansible.builtin.command:
+        cmd: kubectl apply -f k8s/
+      args:
+        chdir: "{{ playbook_dir }}/.."

@@ -6,6 +6,7 @@ import java.math.BigDecimal;
 
 @Entity
 public class Product {
+    // auto generated
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @NotBlank @Size(max = 100)

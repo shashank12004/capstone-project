@@ -1,0 +1,11 @@
+# Notice the database host is quickbite-mysql, not localhost.
+
+# This is one of the most important Kubernetes concepts: Pods communicate through Kubernetes Services, not through each other's localhost.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: quickbite-backend-config
+  namespace: quickbite
+data:
+  SPRING_DATASOURCE_URL: jdbc:mysql://quickbite-mysql:3306/quickbite
+  SPRING_DATASOURCE_USERNAME: quickbite_user

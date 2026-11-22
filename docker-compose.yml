@@ -1,21 +1,45 @@
-# Optional local database only; Docker application packaging is a later phase.
+
 services:
   mysql:
-    image: mysql:8.0
-    container_name: quickbite-mysql
+    image: mysql:8.4
     environment:
       MYSQL_DATABASE: quickbite
-      MYSQL_USER: quickbite
-      MYSQL_PASSWORD: quickbite123
-      MYSQL_ROOT_PASSWORD: localroot123
+      MYSQL_USER: quickbite_user
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-Quickbite123!}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-RootQuickbite123!}
     ports:
-      - "3306:3306"
+      - "3307:3306"
     volumes:
-      - quickbite_mysql_data:/var/lib/mysql
+      - mysql_data:/var/lib/mysql
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uquickbite", "-pquickbite123"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p$${MYSQL_ROOT_PASSWORD}"]
       interval: 10s
       timeout: 5s
       retries: 10
+
+  backend:
+    build:
+      context: ./backend
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/quickbite
+      SPRING_DATASOURCE_USERNAME: quickbite_user
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD:-Quickbite123!}
+    ports:
+      - "8081:8080"
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        NEXT_PUBLIC_API_URL: http://localhost:8081
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+
 volumes:
-  quickbite_mysql_data:
+  mysql_data:
+

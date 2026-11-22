@@ -1,0 +1,10 @@
+# This stores non-sensitive MySQL configuration.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: quickbite-mysql-config
+  namespace: quickbite
+data:
+  MYSQL_DATABASE: quickbite
+  MYSQL_USER: quickbite_user
+  
