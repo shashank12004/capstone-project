@@ -1,4 +1,4 @@
-# QuickBite — Online Ordering System (Phase 1 & 2)
+# QuickBite — Online Ordering System 1.0 (Phase 1 & 2)
 
 A college capstone MVP: Next.js frontend, Spring Boot REST API, MySQL, Git/GitHub workflow, and Jenkins CI.
 This repository intentionally stops at Phase 2 (Git + Jenkins). Docker/Kubernetes/Terraform/etc. are future phases.

@@ -24,12 +24,12 @@ export default function Home() {
 
   async function loadProducts() {
     setLoading(true);
-    try { const r=await fetch(`${API}/api/products`); if(!r.ok) throw new Error("API unavailable"); setProducts(await r.json()); }
+    try { const r=await fetch(`${API}/products`); if(!r.ok) throw new Error("API unavailable"); setProducts(await r.json()); }
     catch { setMessage("Cannot connect to backend. Start Spring Boot on port 8080."); }
     finally { setLoading(false); }
   }
   async function loadOrders() {
-    try { const r=await fetch(`${API}/api/orders`); if(!r.ok) throw new Error(); setOrders(await r.json()); }
+    try { const r=await fetch(`${API}/orders`); if(!r.ok) throw new Error(); setOrders(await r.json()); }
     catch { setMessage("Could not load orders. Check backend connection."); }
   }
   useEffect(()=>{ void loadProducts(); },[]);
@@ -44,7 +44,7 @@ export default function Home() {
   async function placeOrder(e:React.FormEvent) {
     e.preventDefault(); setMessage("");
     try {
-      const r=await fetch(`${API}/api/orders`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({customerName,phone,items:cart.map(x=>({productId:x.product.id,quantity:x.quantity}))})});
+      const r=await fetch(`${API}/orders`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({customerName,phone,items:cart.map(x=>({productId:x.product.id,quantity:x.quantity}))})});
       const data=await r.json(); if(!r.ok) throw new Error(data.message||"Could not place order");
       setMessage(`Order #${data.id} placed successfully!`); setCart([]); setCustomerName(""); setPhone(""); await loadOrders(); setTab("orders");
     } catch(err) { setMessage(err instanceof Error?err.message:"Something went wrong"); }
